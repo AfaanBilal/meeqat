@@ -44,8 +44,8 @@ export default function App() {
             const year = new Date().getFullYear();
             const month = new Date().getMonth() + 1;
 
-            const timings = await (await fetch(`http://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=15&tune=0,0,0,5,0,3,0&shafaq=abyad`)).json();
-            console.log(JSON.stringify(timings.data[0]));
+            const timings = await (await fetch(`http://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=15&tune=0,2,0,5,1,3,0,-1`)).json();
+            console.log(JSON.stringify(timings.data[new Date().getDate() - 1]));
 
             setTimings(timings.data[new Date().getDate() - 1].timings);
         })();
