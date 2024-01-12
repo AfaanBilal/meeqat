@@ -99,7 +99,7 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#333',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 4,
@@ -123,10 +123,12 @@ const styles = StyleSheet.create({
     meeqatItemLabel: {
         flex: 1,
         fontSize: 18,
+        color: '#eee',
     },
     meeqatItemValue: {
         flex: 1,
         fontSize: 18,
+        color: '#fff',
         textAlign: 'right',
     },
 });
