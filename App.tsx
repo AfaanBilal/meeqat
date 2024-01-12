@@ -7,11 +7,10 @@
  * @copyright 2023 Afaan Bilal
  */
 
+import React from 'react';
+import * as Location from 'expo-location';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-
-import * as Location from 'expo-location';
-import React from 'react';
 
 export interface Timings {
     Fajr: string;
