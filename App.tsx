@@ -4,7 +4,7 @@
  * @author Afaan Bilal
  * @link   https://afaan.dev
  *
- * @copyright 2023 Afaan Bilal
+ * @copyright 2024 Afaan Bilal
  */
 
 import React from 'react';
