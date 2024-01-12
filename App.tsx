@@ -43,7 +43,7 @@ export default function App() {
         [Fonts.UbuntuBold]: require('./assets/fonts/Ubuntu/Ubuntu-Bold.ttf'),
     });
 
-    const [error, setError] = React.useState("");
+    const [error, setError] = React.useState('');
     const [date, setDate] = React.useState(new Date());
     const [timings, setTimings] = React.useState<Timings>();
 
@@ -51,7 +51,7 @@ export default function App() {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                setError('Permission to access location was denied');
+                setError('Location permission denied.');
                 return;
             }
 
@@ -72,7 +72,7 @@ export default function App() {
                     <Text style={{ ...styles.meeqatItemLabel, ...styles.title }}>Meeqat</Text>
                     <Text style={{ ...styles.meeqatItemValue, ...styles.date }}>{date.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' })}</Text>
                 </View>
-                {error && <Text style={styles.title}>{error}</Text>}
+                {error && <Text style={{ ...styles.loading, color: Colors.Accent }}>{error}</Text>}
                 {timings ?
                     <>
                         <View style={styles.meeqatItem}>
@@ -108,7 +108,7 @@ export default function App() {
                             <Text style={styles.copyright}>&copy; Afaan Bilal (afaan.dev)</Text>
                         </View>
                     </> :
-                    <Text>Loading...</Text>
+                    <Text style={styles.loading}>Loading...</Text>
                 }
             </View>
         </SafeAreaView>
@@ -139,6 +139,13 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontFamily: Fonts.SourceSansPro,
         color: Colors.Light,
+    },
+    loading: {
+        textAlign: 'center',
+        fontSize: 24,
+        marginTop: 40,
+        fontFamily: Fonts.Ubuntu,
+        color: Colors.Gray,
     },
     meeqatItem: {
         flexDirection: 'row',
