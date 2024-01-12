@@ -67,7 +67,7 @@ export default function App() {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.Dark }}>
             <View style={styles.container}>
-                <StatusBar style="auto" />
+                <StatusBar style="light" />
                 <View style={styles.titleRow}>
                     <Text style={{ ...styles.meeqatItemLabel, ...styles.title }}>Meeqat</Text>
                     <Text style={{ ...styles.meeqatItemValue, ...styles.date }}>{date.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' })}</Text>
