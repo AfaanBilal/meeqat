@@ -24,41 +24,37 @@ export interface Timings {
     Midnight: string;
 }
 
+const METHOD = 15; // Moonsighting Committee Worldwide
+const TUNE = '0,2,0,5,1,3,0,-1';
+
 export default function App() {
-    const [location, setLocation] = React.useState<Location.LocationObject | null>(null);
-    const [errorMsg, setErrorMsg] = React.useState("");
+    const [error, setError] = React.useState("");
+    const [date, setDate] = React.useState(new Date());
     const [timings, setTimings] = React.useState<Timings>();
 
     React.useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
+                setError('Permission to access location was denied');
                 return;
             }
 
             let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-            console.log(location);
-
-            const year = new Date().getFullYear();
-            const month = new Date().getMonth() + 1;
-
-            const timings = await (await fetch(`http://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=15&tune=0,2,0,5,1,3,0,-1`)).json();
-            console.log(JSON.stringify(timings.data[new Date().getDate() - 1]));
+            const timings = await (await fetch(`http://api.aladhan.com/v1/calendar/${date.getFullYear()}/${date.getMonth() + 1}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=${METHOD}&tune=${TUNE}`)).json();
 
             setTimings(timings.data[new Date().getDate() - 1].timings);
         })();
-    }, []);
+    }, [date]);
 
     return (
         <View style={styles.container}>
             <StatusBar style="auto" />
             <View style={styles.meeqatItem}>
                 <Text style={{ ...styles.meeqatItemLabel, ...styles.title }}>Meeqat</Text>
-                <Text style={{ ...styles.meeqatItemValue, ...styles.date }}>{new Date().toDateString()}</Text>
+                <Text style={{ ...styles.meeqatItemValue, ...styles.date }}>{date.toDateString()}</Text>
             </View>
-            {errorMsg && <Text style={styles.title}>{errorMsg}</Text>}
+            {error && <Text style={styles.title}>{error}</Text>}
             {timings ?
                 <>
                     <View style={styles.meeqatItem}>
