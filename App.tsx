@@ -1,5 +1,3 @@
-
-
 /**
  * Meeqat
  *
@@ -52,26 +50,26 @@ export default function App() {
     const [showDatePicker, setShowDatePicker] = React.useState(false);
     const [timings, setTimings] = React.useState<Timings>();
 
-    const fetchTimings = async (selectedDate: Date) => {
-        try {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                setError('Location permission denied.');
-                return;
-            }
-
-            let location = await Location.getCurrentPositionAsync({});
-            const timings = await fetch(
-                `http://api.aladhan.com/v1/calendar/${selectedDate.getFullYear()}/${selectedDate.getMonth() + 1}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=${METHOD}&tune=${TUNE}`
-            ).then((res) => res.json());
-
-            setTimings(timings.data[selectedDate.getDate() - 1].timings);
-        } catch (error) {
-            setError('Error fetching timings.');
-        }
-    };
-
     React.useEffect(() => {
+        const fetchTimings = async (selectedDate: Date) => {
+            try {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted') {
+                    setError('Location permission denied.');
+                    return;
+                }
+
+                let location = await Location.getCurrentPositionAsync({});
+                const timings = await fetch(
+                    `http://api.aladhan.com/v1/calendar/${selectedDate.getFullYear()}/${selectedDate.getMonth() + 1}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=${METHOD}&tune=${TUNE}`
+                ).then((res) => res.json());
+
+                setTimings(timings.data[selectedDate.getDate() - 1].timings);
+            } catch (error) {
+                setError('Error fetching timings.');
+            }
+        };
+
         fetchTimings(date);
     }, [date]);
 
@@ -85,10 +83,6 @@ export default function App() {
         const nextDay = new Date(date);
         nextDay.setDate(date.getDate() + 1);
         setDate(nextDay);
-    };
-
-    const handleDatePress = () => {
-        setShowDatePicker(true);
     };
 
     const handleDateTimeChange = (_: Event, selected: Date | undefined) => {
@@ -112,7 +106,7 @@ export default function App() {
                     <TouchableOpacity onPress={handlePrevDay}>
                         <Feather name="chevron-left" size={25} color={Colors.Light} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleDatePress}>
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                         <Text style={[styles.dateSelectorText, date.toDateString() === new Date().toDateString() ? styles.currentDayText : null]}>
                             {date.toDateString()} {date.toDateString() === new Date().toDateString() && " (Today)"}
                         </Text>
