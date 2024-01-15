@@ -11,9 +11,11 @@ import React from 'react';
 import * as Location from 'expo-location';
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Fonts } from './src/utils/fonts';
 import { Colors } from './src/utils/colors';
+import { Feather } from "@expo/vector-icons";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export interface Timings {
     Fajr: string;
@@ -45,22 +47,48 @@ export default function App() {
 
     const [error, setError] = React.useState('');
     const [date, setDate] = React.useState(new Date());
+    const [showDatePicker, setShowDatePicker] = React.useState(false);
     const [timings, setTimings] = React.useState<Timings>();
 
     React.useEffect(() => {
         (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                setError('Location permission denied.');
-                return;
+            try {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted') {
+                    setError('Location permission denied.');
+                    return;
+                }
+
+                let location = await Location.getCurrentPositionAsync({});
+                const timings = await fetch(
+                    `http://api.aladhan.com/v1/calendar/${date.getFullYear()}/${date.getMonth() + 1}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=${METHOD}&tune=${TUNE}`
+                ).then((res) => res.json());
+
+                setTimings(timings.data[date.getDate() - 1].timings);
+            } catch (error) {
+                setError('Error fetching timings.');
             }
-
-            let location = await Location.getCurrentPositionAsync({});
-            const timings = await (await fetch(`http://api.aladhan.com/v1/calendar/${date.getFullYear()}/${date.getMonth() + 1}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=${METHOD}&tune=${TUNE}`)).json();
-
-            setTimings(timings.data[new Date().getDate() - 1].timings);
         })();
     }, [date]);
+
+    const handlePrevDay = () => {
+        const prevDay = new Date(date);
+        prevDay.setDate(date.getDate() - 1);
+        setDate(prevDay);
+    };
+
+    const handleNextDay = () => {
+        const nextDay = new Date(date);
+        nextDay.setDate(date.getDate() + 1);
+        setDate(nextDay);
+    };
+
+    const handleDateTimeChange = (_: Event, selected: Date | undefined) => {
+        if (selected) {
+            setDate(selected);
+            setShowDatePicker(false);
+        }
+    };
 
     if (!fontsLoaded) return null;
 
@@ -70,11 +98,30 @@ export default function App() {
                 <StatusBar style="light" />
                 <View style={styles.titleRow}>
                     <Text style={{ ...styles.meeqatItemLabel, ...styles.title }}>Meeqat</Text>
-                    <Text style={{ ...styles.meeqatItemValue, ...styles.date }}>{date.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' })}</Text>
                 </View>
                 {error && <Text style={{ ...styles.loading, color: Colors.Accent }}>{error}</Text>}
+                <View style={styles.datePicker}>
+                    <TouchableOpacity onPress={handlePrevDay}>
+                        <Feather name="chevron-left" size={25} color={Colors.Light} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                        <Text style={[styles.dateSelectorText, date.toDateString() === new Date().toDateString() ? styles.currentDayText : null]}>
+                            <Text style={{ ...styles.meeqatItemValue, ...styles.date }}>{date.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' })} </Text>
+                            <Text>{date.toDateString() === new Date().toDateString() && <Feather name="check-circle" size={20} />}</Text>
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleNextDay}>
+                        <Feather name="chevron-right" size={25} color={Colors.Light} />
+                    </TouchableOpacity>
+                </View>
+                {showDatePicker && <DateTimePicker
+                    value={date}
+                    mode="date"
+                    display="spinner"
+                    onChange={handleDateTimeChange}
+                />}
                 {timings ?
-                    <>
+                    <View style={styles.timingContainer}>
                         <View style={styles.meeqatItem}>
                             <Text style={styles.meeqatItemLabel}>Fajr</Text>
                             <Text style={styles.meeqatItemValue}>{timings.Fajr}</Text>
@@ -107,7 +154,7 @@ export default function App() {
                         <View>
                             <Text style={styles.copyright}>&copy; Afaan Bilal (afaan.dev)</Text>
                         </View>
-                    </> :
+                    </View> :
                     <Text style={styles.loading}>Loading...</Text>
                 }
             </View>
@@ -121,6 +168,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Dark,
         gap: 12,
         padding: 16,
+        marginTop: 25,
     },
     titleRow: {
         flexDirection: 'row',
@@ -140,12 +188,28 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.SourceSansPro,
         color: Colors.Light,
     },
+    datePicker: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 20
+    },
+    dateSelectorText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 16,
+    },
+    currentDayText: {
+        fontSize: 16,
+    },
     loading: {
         textAlign: 'center',
         fontSize: 24,
         marginTop: 40,
         fontFamily: Fonts.Ubuntu,
         color: Colors.Gray,
+    },
+    timingContainer: {
+        marginTop: 35,
     },
     meeqatItem: {
         flexDirection: 'row',
