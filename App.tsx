@@ -9,15 +9,15 @@
  * @copyright 2024 Afaan Bilal
  */
 
-import React from 'react';
-import * as Location from 'expo-location';
-import { useFonts } from 'expo-font';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Fonts } from './src/utils/fonts';
-import { Colors } from './src/utils/colors';
+import React from "react";
+import * as Location from "expo-location";
+import { useFonts } from "expo-font";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Fonts } from "./src/utils/fonts";
+import { Colors } from "./src/utils/colors";
 import { Feather } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export interface Timings {
     Fajr: string;
@@ -32,22 +32,22 @@ export interface Timings {
 }
 
 const METHOD = 15; // Moonsighting Committee Worldwide
-const TUNE = '0,2,0,5,1,3,0,-1';
+const TUNE = "0,2,0,5,1,3,0,-1";
 
 export default function App() {
     const [fontsLoaded] = useFonts({
-        [Fonts.SourceSansProLight]: require('./assets/fonts/Source_Sans_Pro/SourceSansPro-Light.ttf'),
-        [Fonts.SourceSansPro]: require('./assets/fonts/Source_Sans_Pro/SourceSansPro-Regular.ttf'),
-        [Fonts.SourceSansProSemiBold]: require('./assets/fonts/Source_Sans_Pro/SourceSansPro-SemiBold.ttf'),
-        [Fonts.SourceSansProBold]: require('./assets/fonts/Source_Sans_Pro/SourceSansPro-Bold.ttf'),
+        [Fonts.SourceSansProLight]: require("./assets/fonts/Source_Sans_Pro/SourceSansPro-Light.ttf"),
+        [Fonts.SourceSansPro]: require("./assets/fonts/Source_Sans_Pro/SourceSansPro-Regular.ttf"),
+        [Fonts.SourceSansProSemiBold]: require("./assets/fonts/Source_Sans_Pro/SourceSansPro-SemiBold.ttf"),
+        [Fonts.SourceSansProBold]: require("./assets/fonts/Source_Sans_Pro/SourceSansPro-Bold.ttf"),
 
-        [Fonts.UbuntuLight]: require('./assets/fonts/Ubuntu/Ubuntu-Light.ttf'),
-        [Fonts.Ubuntu]: require('./assets/fonts/Ubuntu/Ubuntu-Regular.ttf'),
-        [Fonts.UbuntuMedium]: require('./assets/fonts/Ubuntu/Ubuntu-Medium.ttf'),
-        [Fonts.UbuntuBold]: require('./assets/fonts/Ubuntu/Ubuntu-Bold.ttf'),
+        [Fonts.UbuntuLight]: require("./assets/fonts/Ubuntu/Ubuntu-Light.ttf"),
+        [Fonts.Ubuntu]: require("./assets/fonts/Ubuntu/Ubuntu-Regular.ttf"),
+        [Fonts.UbuntuMedium]: require("./assets/fonts/Ubuntu/Ubuntu-Medium.ttf"),
+        [Fonts.UbuntuBold]: require("./assets/fonts/Ubuntu/Ubuntu-Bold.ttf"),
     });
 
-    const [error, setError] = React.useState('');
+    const [error, setError] = React.useState("");
     const [date, setDate] = React.useState(new Date());
     const [showDatePicker, setShowDatePicker] = React.useState(false);
     const [timings, setTimings] = React.useState<Timings>();
@@ -55,8 +55,8 @@ export default function App() {
     const fetchTimings = async (selectedDate: Date) => {
         try {
             let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                setError('Location permission denied.');
+            if (status !== "granted") {
+                setError("Location permission denied.");
                 return;
             }
 
@@ -67,7 +67,7 @@ export default function App() {
 
             setTimings(timings.data[selectedDate.getDate() - 1].timings);
         } catch (error) {
-            setError('Error fetching timings.');
+            setError("Error fetching timings.");
         }
     };
 
@@ -122,14 +122,15 @@ export default function App() {
                         <Feather name="chevron-right" size={25} color={Colors.Light} />
                     </TouchableOpacity>
                 </View>
-                {showDatePicker && (
-                    <DateTimePicker
-                        value={date}
-                        mode="date"
-                        display="spinner"
-                        onChange={handleDateTimeChange}
-                    />
-                )}
+                {
+                    showDatePicker && (
+                        <DateTimePicker
+                            value={date}
+                            mode="date"
+                            display="spinner"
+                            onChange={handleDateTimeChange}
+                        />
+                    )}
                 {timings ?
                     <View style={styles.timingContainer}>
                         <View style={styles.meeqatItem}>
@@ -181,11 +182,11 @@ const styles = StyleSheet.create({
         marginTop: 25,
     },
     titleRow: {
-        flexDirection: 'row',
+        flexDirection: "row",
         gap: 5,
-        width: '100%',
-        justifyContent: 'flex-start',
-        alignItems: 'baseline',
+        width: "100%",
+        justifyContent: "flex-start",
+        alignItems: "baseline",
         padding: 16,
     },
     title: {
@@ -204,8 +205,8 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     dateSelectorText: {
-        textAlign: 'center',
-        color: 'white',
+        textAlign: "center",
+        color: "white",
         fontSize: 16,
     },
     currentDayText: {
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     loading: {
-        textAlign: 'center',
+        textAlign: "center",
         fontSize: 24,
         marginTop: 40,
         fontFamily: Fonts.Ubuntu,
@@ -223,11 +224,11 @@ const styles = StyleSheet.create({
         marginTop: 35,
     },
     meeqatItem: {
-        flexDirection: 'row',
+        flexDirection: "row",
         gap: 5,
-        width: '100%',
-        justifyContent: 'flex-start',
-        alignItems: 'baseline',
+        width: "100%",
+        justifyContent: "flex-start",
+        alignItems: "baseline",
         padding: 16,
         borderColor: Colors.Gray,
         borderWidth: 0.5,
@@ -243,12 +244,12 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 18,
         color: Colors.Light,
-        textAlign: 'right',
+        textAlign: "right",
         fontFamily: Fonts.UbuntuBold,
     },
     copyright: {
         color: Colors.Gray,
-        textAlign: 'center',
+        textAlign: "center",
         fontFamily: Fonts.SourceSansPro,
         fontSize: 18,
     },
