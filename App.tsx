@@ -51,7 +51,7 @@ export default function App() {
     const [timings, setTimings] = React.useState<Timings>();
 
     React.useEffect(() => {
-        const fetchTimings = async (selectedDate: Date) => {
+        (async () => {
             try {
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
@@ -61,16 +61,14 @@ export default function App() {
 
                 let location = await Location.getCurrentPositionAsync({});
                 const timings = await fetch(
-                    `http://api.aladhan.com/v1/calendar/${selectedDate.getFullYear()}/${selectedDate.getMonth() + 1}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=${METHOD}&tune=${TUNE}`
+                    `http://api.aladhan.com/v1/calendar/${date.getFullYear()}/${date.getMonth() + 1}?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&method=${METHOD}&tune=${TUNE}`
                 ).then((res) => res.json());
 
-                setTimings(timings.data[selectedDate.getDate() - 1].timings);
+                setTimings(timings.data[date.getDate() - 1].timings);
             } catch (error) {
                 setError('Error fetching timings.');
             }
-        };
-
-        fetchTimings(date);
+        })();
     }, [date]);
 
     const handlePrevDay = () => {
@@ -108,23 +106,20 @@ export default function App() {
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                         <Text style={[styles.dateSelectorText, date.toDateString() === new Date().toDateString() ? styles.currentDayText : null]}>
-                            {date.toDateString()} {date.toDateString() === new Date().toDateString() && " (Today)"}
+                            <Text style={{ ...styles.meeqatItemValue, ...styles.date }}>{date.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' })} </Text>
+                            <Text>{date.toDateString() === new Date().toDateString() && <Feather name="check-circle" size={20} />}</Text>
                         </Text>
-
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleNextDay}>
                         <Feather name="chevron-right" size={25} color={Colors.Light} />
                     </TouchableOpacity>
                 </View>
-                {
-                    showDatePicker && (
-                        <DateTimePicker
-                            value={date}
-                            mode="date"
-                            display="spinner"
-                            onChange={handleDateTimeChange}
-                        />
-                    )}
+                {showDatePicker && <DateTimePicker
+                    value={date}
+                    mode="date"
+                    display="spinner"
+                    onChange={handleDateTimeChange}
+                />}
                 {timings ?
                     <View style={styles.timingContainer}>
                         <View style={styles.meeqatItem}>
