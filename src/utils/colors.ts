@@ -12,5 +12,4 @@ export const Colors = {
     Gray: '#404B69',
     Accent: '#DA0463',
     Light: '#DBEDF3',
-    ORANGE: "#C07D00",
 };
