@@ -14,8 +14,8 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Fonts } from './src/utils/fonts';
 import { Colors } from './src/utils/colors';
-import { Feather } from "@expo/vector-icons";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Feather, FontAwesome5 } from '@expo/vector-icons';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 export interface Timings {
     Fajr: string;
@@ -83,9 +83,9 @@ export default function App() {
         setDate(nextDay);
     };
 
-    const handleDateTimeChange = (_: Event, selected: Date | undefined) => {
-        if (selected) {
-            setDate(selected);
+    const handleDateTimeChange = (_: DateTimePickerEvent, date?: Date | undefined) => {
+        if (date) {
+            setDate(date);
             setShowDatePicker(false);
         }
     };
@@ -100,26 +100,30 @@ export default function App() {
                     <Text style={{ ...styles.meeqatItemLabel, ...styles.title }}>Meeqat</Text>
                 </View>
                 {error && <Text style={{ ...styles.loading, color: Colors.Accent }}>{error}</Text>}
-                <View style={styles.datePicker}>
-                    <TouchableOpacity onPress={handlePrevDay}>
-                        <Feather name="chevron-left" size={25} color={Colors.Light} />
+                <View style={styles.dateBar}>
+                    <TouchableOpacity onPress={handlePrevDay} style={styles.chevronButton}>
+                        <Feather name="chevron-left" size={24} color={Colors.Light} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                        <Text style={[styles.dateSelectorText, date.toDateString() === new Date().toDateString() ? styles.currentDayText : null]}>
-                            <Text style={{ ...styles.meeqatItemValue, ...styles.date }}>{date.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' })} </Text>
-                            <Text>{date.toDateString() === new Date().toDateString() && <Feather name="check-circle" size={20} />}</Text>
+                        <Text style={styles.date}>
+                            {date.toDateString() === new Date().toDateString() && <FontAwesome5 name="dot-circle" color={Colors.Gray} size={24} />}
+                            &nbsp;
+                            {date.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' })}
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleNextDay}>
-                        <Feather name="chevron-right" size={25} color={Colors.Light} />
+                    <TouchableOpacity onPress={handleNextDay} style={styles.chevronButton}>
+                        <Feather name="chevron-right" size={24} color={Colors.Light} />
                     </TouchableOpacity>
                 </View>
-                {showDatePicker && <DateTimePicker
-                    value={date}
-                    mode="date"
-                    display="spinner"
-                    onChange={handleDateTimeChange}
-                />}
+                {showDatePicker &&
+                    <DateTimePicker
+                        value={date}
+                        mode="date"
+                        display="spinner"
+                        onChange={handleDateTimeChange}
+                        themeVariant="dark"
+                    />
+                }
                 {timings ?
                     <View style={styles.timingContainer}>
                         <View style={styles.meeqatItem}>
@@ -168,15 +172,10 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Dark,
         gap: 12,
         padding: 16,
-        marginTop: 25,
     },
     titleRow: {
         flexDirection: 'row',
-        gap: 5,
-        width: '100%',
-        justifyContent: 'flex-start',
-        alignItems: 'baseline',
-        padding: 16,
+        padding: 12,
     },
     title: {
         fontSize: 36,
@@ -188,18 +187,12 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.SourceSansPro,
         color: Colors.Light,
     },
-    datePicker: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 20
-    },
-    dateSelectorText: {
-        textAlign: 'center',
-        color: 'white',
-        fontSize: 16,
-    },
-    currentDayText: {
-        fontSize: 16,
+    dateBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 4,
+        paddingVertical: 12,
     },
     loading: {
         textAlign: 'center',
@@ -209,7 +202,8 @@ const styles = StyleSheet.create({
         color: Colors.Gray,
     },
     timingContainer: {
-        marginTop: 35,
+        flex: 1,
+        gap: 12,
     },
     meeqatItem: {
         flexDirection: 'row',
@@ -240,5 +234,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: Fonts.SourceSansPro,
         fontSize: 18,
+    },
+    chevronButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        padding: 8,
+        borderRadius: 50,
+        borderColor: Colors.Gray,
     },
 });
