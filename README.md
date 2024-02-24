@@ -10,7 +10,7 @@ Author: **[Afaan Bilal](https://afaan.dev)**
 
 ## Screenshots
 
-![Meeqat](screenshots/meeqat.png)
+![Meeqat](screenshots/meeqat-hero.png)
 
 ---
 
