@@ -2,6 +2,7 @@
   "expo": {
     "name": "meeqat",
     "slug": "meeqat",
+    "jsEngine": "jsc",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -32,7 +33,9 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow Meeqat to use your location to determine accurate times."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-font"
     ]
   }
 }
